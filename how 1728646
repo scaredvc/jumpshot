@@ -1,0 +1,34 @@
+[33m569ff96[m[33m ([m[1;36mHEAD[m[33m)[m added a upload button for video upload and changed dropdown selection title
+[33m2b2aef2[m added video preview of user's video
+[33m6cb43d1[m added clarifying comments on how to run django server
+[33mb45d81b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge branch 'main' of https://github.com/Hanson-bit/jumpshot
+[33mbe11811[m fixed drop box title and prepared analysis to align which the chosen nba player from frontend
+[33ma3c92b4[m connected user input video to backend, creates a video in media section
+[33m936be13[m worked on api from frontend for video drop box, need to connect with backend
+[33m8d0672c[m correction of drop down menu options
+[33me68ff9f[m clean comment
+[33mbf1aa71[m removed unused import form layout file
+[33mba0fe1d[m changed dropdown options to 3 nba players
+[33m2a1b8b5[m cleaned main file of unused comment out code
+[33m6539c2f[m added django framework to the backend and put all code into a folder. will need to develop django further
+[33m2ae47da[m Added file drop box component, started api to backend
+[33m12dc69b[m added drop down box, adjusted page into containers, need to put players name and add upload area for video
+[33mbc046fc[m Merge branch 'main' of https://github.com/Hanson-bit/jumpshot
+[33md24fcfa[m added frontend components w/ next.js, fixed directory of backend
+[33mf83d598[m removed unnecesarry files
+[33mfe4cff5[m Add gitignore with rules for env files, node modules, and video files
+[33m0ebc1d8[m Add YouTube scraper for NBA player shot analysis with Puppeteer
+[33mdcd64cf[m Add analysis bridge to handle NBA player analysis via Node.js
+[33m1728646[m Update main.py with video analysis and NBA player comparison functionality
+[33md4d30dd[m removed unused imports
+[33mec4d7e4[m peacock coloring
+[33m67e7d95[m Co-authored-by: pranavs741 <pranavs741@users.noreply.github.com>
+[33m516e48f[m Co-authored-by: pranavs741 <pranavs741@users.noreply.github.com>
+[33m2ade2f0[m web scrapper succesfully scrapes message from summary.ai
+[33m00ec01b[m Created javascript end of web scraper, web scrarper still in progress, can't figure out how to locate and pick out hyperlinks
+[33m95b9277[m Co-authored-by: pranavs741 <pranavs741@users.noreply.github.com>
+[33mcd43931[m Co-authored-by: pranavs741 <pranavs741@users.noreply.github.com>
+[33mf90b7e7[m Changed prompt to a descriptive prompt.
+[33m980a273[m Works with 4o and prompt
+[33m95bc8f0[m add main.py
+[33m3dfd1bf[m Initial commit
