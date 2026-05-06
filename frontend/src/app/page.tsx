@@ -12,14 +12,20 @@ export default function Home() {
   return (
     <div className="page-container">
       <section className="top-section">
-        <div className="main-page-name">
-          Jumpshot Comparitor
-        </div>
+        <div className="main-page-name">Jumpshot Comparison Prototype</div>
         <ModeToggle />
       </section>
 
       <section className="middle-section">
         <div className="w-full max-w-2xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+              Early prototype
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Exploring why LLMs fail at basketball motion analysis from video alone.
+            </p>
+          </div>
           <div className="flex justify-center">
             <Select>
               <SelectTrigger className="w-[400px]">

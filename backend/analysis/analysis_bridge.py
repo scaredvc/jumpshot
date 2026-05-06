@@ -1,45 +1,106 @@
 import os
-import json
 import subprocess
-import platform
+
+
+DEFAULT_REFERENCE_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "nba_reference.txt",
+)
+
+
+def _is_truthy(value):
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def is_demo_mode():
+    return _is_truthy(os.environ.get("DEMO_MODE", "true"))
+
+
+def _load_reference_sections(reference_path):
+    with open(reference_path, "r", encoding="utf-8") as handle:
+        content = handle.read().strip()
+
+    sections = {}
+    current_player = None
+    current_lines = []
+
+    for line in content.splitlines():
+        if line.startswith("## "):
+            if current_player and current_lines:
+                sections[current_player] = "\n".join(current_lines).strip()
+            current_player = line[3:].strip()
+            current_lines = []
+            continue
+        current_lines.append(line)
+
+    if current_player and current_lines:
+        sections[current_player] = "\n".join(current_lines).strip()
+
+    return sections
+
+
+def get_local_nba_player_analysis(player_name, reference_path=DEFAULT_REFERENCE_FILE):
+    if not os.path.exists(reference_path):
+        raise FileNotFoundError(
+            f"NBA reference file not found at {reference_path}."
+        )
+
+    sections = _load_reference_sections(reference_path)
+    if player_name not in sections:
+        available_players = ", ".join(sorted(sections)) or "none"
+        raise KeyError(
+            f"No local NBA reference found for {player_name}. "
+            f"Available players: {available_players}."
+        )
+
+    return sections[player_name]
+
+
+def _run_scraper(player_name):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_path = os.path.join("yt webscraper puppeteer", "index.js")
+    node_source = (
+        f"const getPlayerAnalysis = require('./{script_path}');"
+        "async function run() {"
+        f"  const analysis = await getPlayerAnalysis('{player_name}');"
+        "  if (typeof analysis === 'string') {"
+        "    console.log(analysis);"
+        "  } else {"
+        "    console.log(JSON.stringify(analysis));"
+        "  }"
+        "}"
+        "run().catch((error) => {"
+        "  console.error(error.message);"
+        "  process.exit(1);"
+        "});"
+    )
+
+    result = subprocess.run(
+        ["node", "-e", node_source],
+        capture_output=True,
+        text=True,
+        cwd=script_dir,
+        check=False,
+    )
+
+    if result.returncode != 0:
+        stderr = result.stderr.strip() or "Unknown scraper failure"
+        raise RuntimeError(stderr)
+
+    stdout = result.stdout.strip()
+    if not stdout:
+        raise RuntimeError("Scraper returned no analysis text.")
+
+    return stdout
+
 
 def get_nba_player_analysis(player_name):
+    if is_demo_mode():
+        return get_local_nba_player_analysis(player_name)
+
     try:
-        # Point to the correct Node.js script
-        script_path = os.path.join('yt webscraper puppeteer', 'index.js')
-        
-        # Create a temporary Node.js script that calls our main scraper
-        with open('temp_script.js', 'w') as f:
-            f.write(f'''
-            const getPlayerAnalysis = require('./{script_path}');
-            
-            async function run() {{
-                try {{
-                    const analysis = await getPlayerAnalysis('{player_name}');
-                    console.log(JSON.stringify(analysis));
-                }} catch (error) {{
-                    console.error(JSON.stringify({{error: error.message}}));
-                }}
-            }}
-            
-            run();
-            ''')
-        
-        # Run the Node.js script
-        result = subprocess.run(['node', 'temp_script.js'], 
-                             capture_output=True, 
-                             text=True,
-                             cwd=os.path.dirname(os.path.abspath(__file__)))
-        
-        # Parse output
-        try:
-            if result.stderr:
-                return {"error": result.stderr}
-            return result.stdout.strip()
-        except json.JSONDecodeError:
-            return {"error": "Failed to parse Node.js output"}
-            
-    finally:
-        # Clean up temp file
-        if os.path.exists('temp_script.js'):
-            os.remove('temp_script.js')
+        return _run_scraper(player_name)
+    except Exception:
+        if os.path.exists(DEFAULT_REFERENCE_FILE):
+            return get_local_nba_player_analysis(player_name)
+        raise
