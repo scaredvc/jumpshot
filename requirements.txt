@@ -1,0 +1,7 @@
+openai
+google-genai
+opencv-python
+python-dotenv
+ipython
+django
+django-cors-headers
